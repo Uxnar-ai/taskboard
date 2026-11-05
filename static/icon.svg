@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="auto-lab">
+  <!-- tiny-webapp-kit · icon.svg —— 站群的统一标记：低多边形狐狸头，左眼青绿。
+       设计约束：16px 下必须还能认出「一个带细长尖耳的头 + 一只亮眼」，
+       所以只保留 4 个色块，不放渐变、不放细节线；整体放大到贴边，小尺寸才够亮。 -->
+  <rect width="32" height="32" rx="8" fill="#171c23" stroke="#ffffff" stroke-opacity=".14" stroke-width="1"/>
+
+  <g transform="translate(16 16) scale(1.08) translate(-16 -16)">
+    <!-- 头部：细长双耳 + 宽脸颊 + 钝下巴；两耳之间留 V 形凹口，这是「像狐狸」的关键 -->
+    <path d="M8.2 3.6 L7.6 12.0 L6.5 17.2 L11.6 24.4 L16 26.4 L20.4 24.4 L25.5 17.2
+             L24.4 12.0 L23.8 3.6 L21 11.4 L16 9.2 L11 11.4 Z"
+          fill="#57616b"/>
+
+    <!-- 右半边压暗，给出棱面感 -->
+    <path d="M16 9.2 L21 11.4 L23.8 3.6 L24.4 12.0 L25.5 17.2 L20.4 24.4 L16 26.4 Z" fill="#343c45"/>
+
+    <!-- 左眼：青绿三角 + 一圈淡光晕；16px 靠这点亮色认图 -->
+    <circle cx="11.9" cy="16.6" r="2.8" fill="#35e6a8" opacity=".18"/>
+    <path d="M10.2 15.3 L13.4 16.4 L11.1 18.6 Z" fill="#3df0b4"/>
+  </g>
+</svg>

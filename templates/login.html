@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}登录{% endblock %}
+
+{% block body %}
+<div class="loginbox">
+  <h2>登录后可编辑</h2>
+  <p class="dim">不登录也能看全部任务卡，只是不能建、改、删。</p>
+  {% if err %}<div class="notice err">{{ err }}</div>{% endif %}
+  <form method="post" class="form">
+    <label class="f"><span>账号</span>
+      <input type="text" name="u" required autocomplete="username" autofocus></label>
+    <label class="f"><span>密码</span>
+      <input type="password" name="p" required autocomplete="current-password"></label>
+    <div class="fact"><button class="btn primary" type="submit">登录</button></div>
+  </form>
+</div>
+{% endblock %}

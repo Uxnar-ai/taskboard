@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% macro card(c, archived=False) %}
+<article class="card st-{{ c.status }}">
+  <div class="chead">
+    <h3>{{ c.title }}</h3>
+    <span class="badge b-{{ c.status }}">{{ status_label.get(c.status, c.status) }}</span>
+  </div>
+  <div class="cmeta">
+    <span>{{ c.date }}</span>
+    <span>{{ {'full':'整轮','half':'≤90分钟','touch':'≤20分钟'}.get(c.budget, c.budget) }}</span>
+    <span><code>{{ c.slug }}</code></span>
+    {% if c.origin == 'web' %}<span class="tag">网页建</span>{% endif %}
+    {% if c.spec %}<span class="dim">spec: {{ c.spec }}</span>{% endif %}
+  </div>
+  {% if c.lede %}<p class="clede">{{ c.lede }}</p>{% endif %}
+
+  {% if c.reqs or c.criteria %}
+  <details class="cdet">
+    <summary>{{ c.reqs|length }} 条硬要求 · {{ c.criteria|length }} 条完成判据</summary>
+    {% if c.reqs %}
+      <h4>硬要求</h4>
+      <ul>{% for r in c.reqs %}<li>{{ r }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% if c.criteria %}
+      <h4>完成判据</h4>
+      <ul class="crit">{% for r in c.criteria %}<li>{{ r }}</li>{% endfor %}</ul>
+    {% endif %}
+    {% if c.notes %}<h4>备注</h4><p class="dim pre">{{ c.notes }}</p>{% endif %}
+  </details>
+  {% endif %}
+
+  {% if authed and not archived %}
+  <div class="cact">
+    {% if c.status == 'planned' %}
+      <form method="post" action="{{ url_for('change_status', slug=c.slug) }}">
+        <input type="hidden" name="status" value="doing">
+        <button class="mini go">开始做</button>
+      </form>
+    {% endif %}
+    {% if c.status in ('planned', 'doing') %}
+      <form method="post" action="{{ url_for('change_status', slug=c.slug) }}">
+        <input type="hidden" name="status" value="carry">
+        <button class="mini carry">明天收尾</button>
+      </form>
+      <form method="post" action="{{ url_for('change_status', slug=c.slug) }}">
+        <input type="hidden" name="status" value="done">
+        <button class="mini ok">完成</button>
+      </form>
+    {% elif c.status == 'carry' %}
+      <form method="post" action="{{ url_for('change_status', slug=c.slug) }}">
+        <input type="hidden" name="status" value="done">
+        <button class="mini ok">收尾完成</button>
+      </form>
+      <form method="post" action="{{ url_for('change_status', slug=c.slug) }}">
+        <input type="hidden" name="status" value="doing">
+        <button class="mini go">继续做</button>
+      </form>
+    {% endif %}
+    <a class="mini" href="{{ url_for('edit', slug=c.slug) }}">编辑</a>
+    {% if c.status == 'planned' %}
+      <form method="post" action="{{ url_for('delete', slug=c.slug) }}"
+            onsubmit="return confirm('删除这张卡？只有「待做」能删。');">
+        <button class="mini del">删除</button>
+      </form>
+    {% endif %}
+  </div>
+  {% endif %}
+</article>
+{% endmacro %}
+
+{% block body %}
+{% if request.args.get('shifted') %}
+<div class="notice warn">目标日期已排满 {{ max_per_day }} 张，新卡已自动顺延到 <b>{{ request.args.get('shifted') }}</b>。</div>
+{% endif %}
+{% if not authed %}
+<div class="notice">当前为只读浏览 · <a href="{{ url_for('login') }}">登录</a>后可新建、修改、删除任务卡</div>
+{% endif %}
+
+<div class="stats">
+  <span>今天 <b>{{ st.today }}/{{ max_per_day }}</b> 张</span>
+  <span>待做 <b>{{ st.planned }}</b></span>
+  <span>执行中 <b>{{ st.doing }}</b></span>
+  <span class="warn">明天收尾 <b>{{ st.carry }}</b></span>
+  <span class="ok">累计完成 <b>{{ st.done }}</b></span>
+</div>
+
+{% if overdue %}
+<h2 class="sect errc">逾期未结案 <em>{{ overdue|length }}</em></h2>
+{% for c in overdue %}{{ card(c) }}{% endfor %}
+{% endif %}
+
+<h2 class="sect">今天 <em>{{ today }}</em> <span class="dim">{{ here|length }}/{{ max_per_day }}</span></h2>
+{% if here %}
+  {% for c in here %}{{ card(c) }}{% endfor %}
+{% else %}
+  <p class="empty">今天还没有任务卡。{% if authed %}<a href="{{ url_for('new') }}">建一张</a>{% endif %}</p>
+{% endif %}
+
+{% if future %}
+<h2 class="sect">之后 <em>{{ future|length }}</em></h2>
+{% for c in future %}{{ card(c) }}{% endfor %}
+{% endif %}
+
+{% if done %}
+<h2 class="sect">已结案 <em>最近 {{ done|length }}</em></h2>
+{% for c in done %}{{ card(c, archived=True) }}{% endfor %}
+{% endif %}
+{% endblock %}

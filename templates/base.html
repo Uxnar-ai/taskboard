@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}任务卡{% endblock %}</title>
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='icon.svg') }}">
+<meta name="theme-color" content="#f6f6f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14161a" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="{{ url_for('static', filename='theme.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='site.css') }}">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1><a href="{{ url_for('index') }}" class="brand">任务卡</a></h1>
+      <p class="lede">在网页上写任务卡，auto-lab 每天 04:00 直接读它开工</p>
+    </div>
+    <div class="hact">
+      {% if authed %}
+        <a class="btn primary" href="{{ url_for('new') }}">新建任务卡</a>
+        <a class="toggle" href="{{ url_for('logout') }}">退出</a>
+      {% else %}
+        <a class="toggle" href="{{ url_for('login') }}">登录</a>
+      {% endif %}
+      <button class="toggle" id="theme">跟随系统</button>
+    </div>
+  </header>
+
+{% block body %}{% endblock %}
+
+  <footer>
+    卡片存于本机 · 每天最多 {{ max_per_day }} 张，满了自动顺延
+    · 只读接口 <code>/api/today</code>
+  </footer>
+</div>
+<script src="{{ url_for('static', filename='base.js') }}"></script>
+{% block script %}{% endblock %}
+</body>
+</html>

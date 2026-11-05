@@ -1,0 +1,127 @@
+@import url("/_fonts/misans.css");
+/* ============================================================
+   tiny-webapp-kit · theme.css
+   小工具站的统一主题。四个站（snip / jsonfmt / txt / ts）用的就是这套。
+   改颜色只改 :root 里那 12 个变量；组件不用动。
+   字体：正文 MiSans（/_fonts/ 通道，见 SKILL.md「字体」一节）。
+   ============================================================ */
+
+:root{
+  --bg:#f6f6f4;        /* 页面底色 */
+  --card:#fff;         /* 卡片底色 */
+  --fg:#1b1d21;        /* 主文字 */
+  --dim:#6b7076;       /* 次要文字、说明 */
+  --line:#e3e3df;      /* 分割线、边框 */
+  --accent:#2f6df6;    /* 主色（按钮、选中态） */
+  --accent-fg:#fff;    /* 主色上的文字 */
+  --soft:#eef1f8;      /* 浅色块（面板标题条、高亮块） */
+  --ok:#1f7a4d;
+  --warn:#b45309;
+  --err:#c0392b;
+  --radius:12px;
+}
+
+/* 跟随系统（data-theme="auto"）+ 手动强制深/浅，三态共存 */
+@media (prefers-color-scheme: dark){
+  :root[data-theme="auto"]{
+    --bg:#14161a; --card:#1c1f24; --fg:#eceef1; --dim:#9aa1a9; --line:#2c3138;
+    --accent:#5b8cff; --accent-fg:#0b1020; --soft:#232830;
+    --ok:#5fe3a1; --warn:#ffc978; --err:#ff8f7a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161a; --card:#1c1f24; --fg:#eceef1; --dim:#9aa1a9; --line:#2c3138;
+  --accent:#5b8cff; --accent-fg:#0b1020; --soft:#232830;
+  --ok:#5fe3a1; --warn:#ffc978; --err:#ff8f7a;
+}
+:root[data-theme="light"]{
+  --bg:#f6f6f4; --card:#fff; --fg:#1b1d21; --dim:#6b7076; --line:#e3e3df;
+  --accent:#2f6df6; --accent-fg:#fff; --soft:#eef1f8;
+  --ok:#1f7a4d; --warn:#b45309; --err:#c0392b;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font:15px/1.6 MiSans,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1100px; margin:0 auto; padding:24px 16px 48px}
+
+/* 头部 */
+header{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+h1{font-size:20px; margin:0 0 3px}
+.lede{color:var(--dim); font-size:13.5px; margin:0 0 14px}
+.toggle{
+  border:1px solid var(--line); background:var(--card); color:var(--fg);
+  border-radius:999px; padding:5px 11px; font-size:12.5px; cursor:pointer; white-space:nowrap;
+}
+
+/* 工具条：chip 开关 + 下拉 */
+.row{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px}
+.chip{
+  font:inherit; font-size:13px; padding:6px 12px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--line); background:var(--card); color:var(--dim);
+  max-width:100%; white-space:nowrap; flex:0 0 auto;
+}
+.chip.on{background:var(--accent); color:var(--accent-fg); border-color:transparent; font-weight:600}
+.chip.quick{color:var(--fg); border-style:dashed}
+.chip.quick:hover{border-color:var(--accent); color:var(--accent)}
+.lbl{font-size:12.5px; color:var(--dim); margin-right:2px}
+select, input[type=text]{
+  font:inherit; font-size:13.5px; padding:7px 10px; border-radius:8px;
+  border:1px solid var(--line); background:var(--card); color:var(--fg);
+}
+input[type=text]{width:120px}
+.sep{width:1px; height:20px; background:var(--line); margin:0 3px}
+.grow{flex:1 1 auto}
+
+/* 左右双栏（<900px 自动叠成单列） */
+.panes{display:grid; gap:12px}
+@media (min-width:900px){ .panes{grid-template-columns:1fr 1fr} }
+.pane{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  overflow:hidden; display:flex; flex-direction:column; min-width:0;
+}
+.pane h2{
+  margin:0; padding:8px 12px; font-size:12.5px; font-weight:600; letter-spacing:.3px;
+  color:var(--dim); border-bottom:1px solid var(--line); background:var(--soft);
+  display:flex; justify-content:space-between; gap:8px; align-items:center;
+}
+.pane h2 button{
+  font:inherit; font-size:12px; padding:3px 9px; border-radius:6px; cursor:pointer;
+  border:1px solid var(--line); background:var(--card); color:var(--fg);
+}
+textarea{
+  border:0; width:100%; height:340px; resize:vertical; padding:12px; background:transparent; color:var(--fg);
+  font:13.5px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+textarea:focus{outline:2px solid var(--accent); outline-offset:-2px}
+pre.out, .out{
+  margin:0; height:340px; overflow:auto; padding:12px;
+  font:13.5px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:pre-wrap; word-break:break-all;
+}
+
+/* 统计条 */
+.stats{font-size:12.5px; color:var(--dim); display:flex; gap:16px; flex-wrap:wrap; margin-top:9px}
+.stats b{color:var(--fg); font-weight:600}
+.stats .ok{color:var(--ok)}
+.stats .warn{color:var(--warn)}
+
+/* 零星组件 */
+.mark{background:rgba(47,109,246,.18); color:inherit}
+.err{
+  display:none; margin-bottom:10px; padding:9px 12px; border-radius:9px; font-size:13.5px;
+  background:rgba(192,57,43,.1); color:var(--err); border:1px solid rgba(192,57,43,.25);
+}
+.err.on{display:block}
+.empty{padding:18px 12px; color:var(--dim); font-size:13.5px}
+footer{margin-top:20px; font-size:12.5px; color:var(--dim)}
+
+@media (max-width:560px){
+  .row{gap:6px}
+  .chip{font-size:12.5px; padding:5px 10px}
+  select, input[type=text]{font-size:13px; padding:6px 8px}
+  .sep{display:none}
+}

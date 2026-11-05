@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}{{ '编辑任务卡' if mode == 'edit' else '新建任务卡' }}{% endblock %}
+
+{% block body %}
+{% if err %}<div class="notice err">{{ err }}</div>{% endif %}
+
+<form method="post" class="form" action="{{ url_for('edit', slug=slug) if mode == 'edit' else url_for('new') }}">
+  <label class="f">
+    <span>标题 <i>一句话说清要做什么</i></span>
+    <input type="text" name="title" required maxlength="80"
+           value="{{ form.get('title','') }}" placeholder="例：把日报改成早上 7 点推送">
+  </label>
+
+  <div class="fgrid">
+    <label class="f">
+      <span>生效日 <i>该日已满 {{ max_per_day }} 张会自动往后顺延</i></span>
+      <input type="date" name="date" value="{{ form.get('date') or today }}">
+    </label>
+    <label class="f">
+      <span>时间预算</span>
+      <select name="budget">
+        {% set cb = form.get('budget','full') %}
+        <option value="full" {{ 'selected' if cb == 'full' }}>整轮（今天主要就做它）</option>
+        <option value="half" {{ 'selected' if cb == 'half' }}>一半（≤90 分钟）</option>
+        <option value="touch" {{ 'selected' if cb == 'touch' }}>顺手（≤20 分钟）</option>
+      </select>
+    </label>
+    <label class="f">
+      <span>短名 <i>可留空自动生成</i></span>
+      <input type="text" name="slug" value="{{ form.get('slug','') if mode == 'new' else form.get('slug','') }}"
+             {{ 'readonly' if mode == 'edit' }} placeholder="d1106-1">
+    </label>
+  </div>
+
+  <label class="f">
+    <span>一句话 <i>首屏给用户看的那句用途，不超过 40 字</i></span>
+    <input type="text" name="lede" maxlength="60" value="{{ form.get('lede','') }}"
+           placeholder="例：把长链接变短，粘贴就出结果">
+  </label>
+
+  <label class="f">
+    <span>硬要求 <i>一行一条，写可判定的条件</i></span>
+    <textarea name="reqs" rows="4" placeholder="必须按天分组&#10;不许开新子域名&#10;页面不出现内网 IP">{{ form.get('reqs_text','') }}</textarea>
+  </label>
+
+  <label class="f">
+    <span>完成判据 <i>一行一条，做完逐条打勾</i></span>
+    <textarea name="criteria" rows="4" placeholder="线上 curl 返回 200 且正文非空&#10;关键路径实测过">{{ form.get('criteria_text','') }}</textarea>
+  </label>
+
+  <label class="f">
+    <span>详细规格路径 <i>可选，留空则默认 src/&lt;短名&gt;/PLAN.md</i></span>
+    <input type="text" name="spec" value="{{ form.get('spec','') }}" placeholder="src/xxx/PLAN.md">
+  </label>
+
+  <label class="f">
+    <span>备注 <i>边界、已知风险、不做的东西</i></span>
+    <textarea name="notes" rows="3">{{ form.get('notes','') }}</textarea>
+  </label>
+
+  <div class="fact">
+    <button class="btn primary" type="submit">{{ '保存修改' if mode == 'edit' else '建这张卡' }}</button>
+    <a class="btn" href="{{ url_for('index') }}">取消</a>
+    {% if mode == 'edit' %}<span class="dim">改完直接落到 <code>{{ form.get('date') }}-{{ form.get('slug') }}.md</code></span>{% endif %}
+  </div>
+</form>
+{% endblock %}
